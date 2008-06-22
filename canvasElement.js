@@ -128,8 +128,6 @@ var Canvas = window.Canvas || {};
 			var canvasEl = document.createElement('canvas');
 			canvasEl.id = el + '';
 			var oCanvas = document.body.insertBefore(canvasEl, document.body.firstChild);
-			/// oCanvas.setAttribute('width', this._oConfig.width);
-		    /// oCanvas.setAttribute('height', this._oConfig.height);
 			this._oElement = document.getElementById(el + '');
 		}
 	
@@ -154,8 +152,10 @@ var Canvas = window.Canvas || {};
      */
 	Canvas.Element.prototype._initConfig = function(oConfig) {
 		this._oConfig = oConfig;
-		this._oElement.setAttribute('width', this._oConfig.width);
-	    this._oElement.setAttribute('height', this._oConfig.height);
+		this._oElement.width = this._oConfig.width;
+	  this._oElement.height = this._oConfig.height;
+		this._oElement.style.width = this._oConfig.width + 'px';
+	  this._oElement.style.height = this._oConfig.height + 'px';
 	};
 
 	/**
@@ -178,8 +178,10 @@ var Canvas = window.Canvas || {};
 		var canvasEl = excanvas(document.createElement('canvas'));
 		canvasEl.id = 'canvas-container';
 		var oContainer = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
-		oContainer.setAttribute('width', this._oConfig.width);
-	    oContainer.setAttribute('height', this._oConfig.height);
+		oContainer.width = this._oConfig.width;
+	  oContainer.height = this._oConfig.height;
+		oContainer.style.width = this._oConfig.width + 'px';
+	  oContainer.style.height = this._oConfig.height + 'px';
 		// this will contain all images that are not on the top
 		this._oContextContainer = oContainer.getContext('2d'); 
 	};
@@ -188,8 +190,10 @@ var Canvas = window.Canvas || {};
 		var canvasEl = excanvas(document.createElement('canvas'));
 		canvasEl.id = 'canvas-background';
 		var oBackground = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
-		oBackground.setAttribute('width', this._oConfig.width);
-	    oBackground.setAttribute('height', this._oConfig.height);
+		oBackground.width = this._oConfig.width;
+	  oBackground.height = this._oConfig.height;
+		oBackground.style.width = this._oConfig.width + 'px';
+	  oBackground.style.height = this._oConfig.height + 'px';
 		// this will contain the background
 		this._oContextBackground = oBackground.getContext('2d'); 
 	};
