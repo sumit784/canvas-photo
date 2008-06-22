@@ -56,9 +56,7 @@ var Canvas = window.Canvas || {};
      * @final
      * @type String
      */
-    /// Canvas.Element.CSS_CANVAS = "canvas-module";
-	/// mirar els cursors per veure com afagir classes en comptes de matxacarles
-	
+    /// Canvas.Element.CSS_CANVAS = "canvas-module";	
 	Canvas.Element.prototype.fillBackground = true;
 	Canvas.Element.prototype.showcorners = false;
 	Canvas.Element.prototype.photoborder = true;
@@ -177,7 +175,7 @@ var Canvas = window.Canvas || {};
      * @method _createContainer
      */
 	Canvas.Element.prototype._createContainer = function() {
-		var canvasEl = document.createElement('canvas');
+		var canvasEl = excanvas(document.createElement('canvas'));
 		canvasEl.id = 'canvas-container';
 		var oContainer = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
 		oContainer.setAttribute('width', this._oConfig.width);
@@ -187,7 +185,7 @@ var Canvas = window.Canvas || {};
 	};
 	
 	Canvas.Element.prototype._createCanvasBackground = function() {
-		var canvasEl = document.createElement('canvas');
+		var canvasEl = excanvas(document.createElement('canvas'));
 		canvasEl.id = 'canvas-background';
 		var oBackground = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
 		oBackground.setAttribute('width', this._oConfig.width);
