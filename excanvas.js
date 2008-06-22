@@ -31,9 +31,10 @@
 // * Optimize. There is always room for speed improvements.
 
 // only add this code if we do not already have a canvas implementation
+var excanvas = function(canvas){if (arguments.length == 1) return canvas;}
 if (!window.CanvasRenderingContext2D) {
 
-(function () {
+excanvas = function (canvasObject) {
 
   // alias some functions to make (compiled) code shorter
   var m = Math;
@@ -46,18 +47,32 @@ if (!window.CanvasRenderingContext2D) {
   var Z2 = Z / 2;
 
   var G_vmlCanvasManager_ = {
-    init: function (opt_doc) {
+    init: function (opt_doc, canvasObject) {
       var doc = opt_doc || document;
       if (/MSIE/.test(navigator.userAgent) && !window.opera) {
         var self = this;
-        doc.attachEvent("onreadystatechange", function () {
-          self.init_(doc);
-        });
+        if (typeof canvasObject != "undefined")
+        {
+           return self.init_(doc, canvasObject);
+        }
+        else
+        {
+            doc.attachEvent("onreadystatechange", function () {self.init_(doc);});
+        }
       }
     },
 
-    init_: function (doc) {
-      if (doc.readyState == "complete") {
+    init_: function (doc, canvasObject) 
+    {        
+      if (typeof canvasObject != "undefined")
+      {      
+          if (!canvasObject.getContext) {          
+           return this.initElement(canvasObject);
+          }      
+        return;
+      }
+      if (doc.readyState == "complete")
+      {
         // create xmlns
         if (!doc.namespaces["g_vml_"]) {
           doc.namespaces.add("g_vml_", "urn:schemas-microsoft-com:vml");
@@ -65,7 +80,7 @@ if (!window.CanvasRenderingContext2D) {
 
         // setup default css
         var ss = doc.createStyleSheet();
-        ss.cssText = "canvas{display:inline-block;overflow:hidden;" +
+        ss.cssText = "canvas{display:inline-block;/*overflow:hidden;*/" +
             // default size is 300x150 in Gecko and Opera
             "text-align:left;width:300px;height:150px}" +
             "g_vml_\\:*{behavior:url(#default#VML)}";
@@ -100,6 +115,11 @@ if (!window.CanvasRenderingContext2D) {
           ns.removeNode();
         }
       }
+      if (el.parentNode == null)
+      {
+        return el;
+      }
+      
       el.parentNode.replaceChild(newEl, el);
       return newEl;
     },
@@ -168,7 +188,7 @@ if (!window.CanvasRenderingContext2D) {
     }
   }
 
-  G_vmlCanvasManager_.init();
+  var newCanvas = G_vmlCanvasManager_.init(null, canvasObject);
 
   // precompute "00" to "FF"
   var dec2hex = [];
@@ -780,6 +800,9 @@ if (!window.CanvasRenderingContext2D) {
   CanvasGradient = CanvasGradient_;
   CanvasPattern = CanvasPattern_;
 
-})();
-
+    return newCanvas;
+}
+    
 } // if
+
+excanvas();
