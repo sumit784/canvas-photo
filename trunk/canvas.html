@@ -57,6 +57,8 @@
 					canvas1.fillBackground = (canvas1.fillBackground) ? false : true;							
 					canvas1.renderAll();
 				},
+				
+				//! insert these functions to the library. No access to _aImages should be done from here
 				showCorners: function() {
 					this.cornersvisible = (this.cornersvisible) ? false : true;
 					for (var i = 0, l = canvas1._aImages.length; i < l; i += 1) {
