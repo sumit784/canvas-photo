@@ -223,6 +223,9 @@ var Canvas = window.Canvas || {};
      * @param e {Event} Event object fired on mouseup
      */
 	Canvas.Element.prototype.onMouseUp = function(e) {
+		if (this._aImages == null) {
+			return;
+		}
 		if (this._currentTransform) {
 			// determine the new coords everytime the image changes its position
 			this._currentTransform.target.setImageCoords();
@@ -244,7 +247,7 @@ var Canvas = window.Canvas || {};
      */
 	Canvas.Element.prototype.onMouseDown = function(e) {
 		// ignore if something else is already going on
-		if (this._currentTransform != null) {
+		if (this._currentTransform != null || this._aImages == null) {
 			return;
 		}
 		
@@ -284,6 +287,9 @@ var Canvas = window.Canvas || {};
      * @param e {Event} Event object fired on mousemove
      */
 	Canvas.Element.prototype.onMouseMove = function(e) {
+		if (this._aImages == null) {
+			return;
+		}
 		if (this._groupSelector != null) {
 			// We initially clicked in an empty area, so we draw a box for multiple selection.
 			this._groupSelector.left = e.clientX - this._groupSelector.ex;
