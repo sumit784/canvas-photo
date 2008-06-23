@@ -175,7 +175,12 @@ var Canvas = window.Canvas || {};
      * @method _createContainer
      */
 	Canvas.Element.prototype._createContainer = function() {
-		var canvasEl = excanvas(document.createElement('canvas'));
+		if (YAHOO.env.ua.ie) {
+			var canvasEl = excanvas(document.createElement('canvas'));	
+		}
+		else {
+			var canvasEl = document.createElement('canvas');
+		}
 		canvasEl.id = 'canvas-container';
 		var oContainer = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
 		oContainer.width = this._oConfig.width;
@@ -187,7 +192,12 @@ var Canvas = window.Canvas || {};
 	};
 	
 	Canvas.Element.prototype._createCanvasBackground = function() {
-		var canvasEl = excanvas(document.createElement('canvas'));
+		if (YAHOO.env.ua.ie) {
+			var canvasEl = excanvas(document.createElement('canvas'));	
+		}
+		else {
+			var canvasEl = document.createElement('canvas');
+		}
 		canvasEl.id = 'canvas-background';
 		var oBackground = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
 		oBackground.width = this._oConfig.width;
