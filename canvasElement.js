@@ -249,28 +249,29 @@ var Canvas = window.Canvas || {};
    * @param e {Event} Event object fired on mousedown
    */
 	Canvas.Element.prototype.onMouseDown = function(e) {
+		var mp = this.findMousePosition(e);
 		// ignore if something else is already going on
 		if (this._currentTransform != null || this._aImages == null) {
 			return;
 		}
 		
 		// determine whether we clicked the image
-		var oImg = this.findTargetImage(e, false);
+		var oImg = this.findTargetImage(mp, false);
 		if (!oImg) {
-			this._groupSelector = { ex: e.clientX, ey: e.clientY,
+			this._groupSelector = { ex: mp.ex, ey: mp.ey,
 				 					top: 0, left: 0 };
 		}
 		else { 
 			// determine if it's a drag or rotate case
 			// rotate and scale will happen at the same time
-			var action = (!this.findTargetCorner(e, oImg)) ? 'drag' : 'rotate';
+			var action = (!this.findTargetCorner(mp, oImg)) ? 'drag' : 'rotate';
 			
 			this._currentTransform = { 	target: oImg,
 									action: action,
 									scalex: oImg.scalex,
-									offsetX: e.clientX - oImg.left,
-			 						offsetY: e.clientY - oImg.top,
-			 						ex: e.clientX, ey: e.clientY,
+									offsetX: mp.ex - oImg.left,
+			 						offsetY: mp.ey - oImg.top,
+			 						ex: mp.ex, ey: mp.ey,
 									left: oImg.left, top: oImg.top,
 									theta: oImg.theta };
 									
@@ -290,13 +291,14 @@ var Canvas = window.Canvas || {};
    * @param e {Event} Event object fired on mousemove
    */
 	Canvas.Element.prototype.onMouseMove = function(e) {
+		var mp = this.findMousePosition(e);
 		if (this._aImages == null) {
 			return;
 		}
 		if (this._groupSelector != null) {
 			// We initially clicked in an empty area, so we draw a box for multiple selection.
-			this._groupSelector.left = e.clientX - this._groupSelector.ex;
-			this._groupSelector.top = e.clientY - this._groupSelector.ey;
+			this._groupSelector.left = mp.ex - this._groupSelector.ex;
+			this._groupSelector.top = mp.ey - this._groupSelector.ey;
 			this.renderTop();
 		}
 		else if (this._currentTransform == null) {
@@ -304,18 +306,18 @@ var Canvas = window.Canvas || {};
 			// what part of the pictures we are hovering to change the caret symbol.
 			// We won't do that while dragging or rotating in order to improve the
 			// performance.
-			var targetImg = this.findTargetImage(e, true);
+			var targetImg = this.findTargetImage(mp, true);
 			
 			// set mouse image
-			this.setCursor(e, targetImg);
+			this.setCursor(mp, targetImg);
 		}
 		else {
 			if (this._currentTransform.action == 'rotate') {
-				this.rotateImage(e);
-				this.scaleImage(e);			
+				this.rotateImage(mp);
+				this.scaleImage(mp);			
 			}		
 			else {
-				this.translateImage(e);
+				this.translateImage(mp);
 			}
 			// only commit here. when we are actually moving the pictures
 			this.renderTop();
@@ -327,9 +329,9 @@ var Canvas = window.Canvas || {};
    * @method translateImage
    * @param e {Event} the mouse event
    */	
-	Canvas.Element.prototype.translateImage = function(e) {
-		this._currentTransform.target.left = e.clientX - this._currentTransform.offsetX;
-		this._currentTransform.target.top = e.clientY - this._currentTransform.offsetY;
+	Canvas.Element.prototype.translateImage = function(mp) {
+		this._currentTransform.target.left = mp.ex - this._currentTransform.offsetX;
+		this._currentTransform.target.top = mp.ey - this._currentTransform.offsetY;
 	};
 	
 	/**
@@ -337,11 +339,11 @@ var Canvas = window.Canvas || {};
    * @method scaleImage
    * @param e {Event} the mouse event
    */	
-	Canvas.Element.prototype.scaleImage = function(e) {
+	Canvas.Element.prototype.scaleImage = function(mp) {
 		var lastLen = Math.sqrt(Math.pow(this._currentTransform.ey - this._currentTransform.top, 2) +
 	                            Math.pow(this._currentTransform.ex - this._currentTransform.left, 2));
-	    var curLen = Math.sqrt(Math.pow(e.clientY - this._currentTransform.top, 2) +
-	                           Math.pow(e.clientX - this._currentTransform.left, 2));
+	    var curLen = Math.sqrt(Math.pow(mp.ey - this._currentTransform.top, 2) +
+	                           Math.pow(mp.ex - this._currentTransform.left, 2));
 
 	    this._currentTransform.target.scalex = this._currentTransform.scalex * (curLen / lastLen);
 	    this._currentTransform.target.scaley = this._currentTransform.target.scalex;
@@ -352,11 +354,11 @@ var Canvas = window.Canvas || {};
    * @method rotateImage
    * @param e {Event} the mouse event
    */	
-	Canvas.Element.prototype.rotateImage = function(e) {
+	Canvas.Element.prototype.rotateImage = function(mp) {
 		var lastAngle = Math.atan2(this._currentTransform.ey - this._currentTransform.top,
 		                           this._currentTransform.ex - this._currentTransform.left);
-		var curAngle = Math.atan2(e.clientY - this._currentTransform.top,
-		                          e.clientX - this._currentTransform.left);
+		var curAngle = Math.atan2(mp.ey - this._currentTransform.top,
+		                          mp.ex - this._currentTransform.left);
 				
 		this._currentTransform.target.theta = (curAngle - lastAngle) + this._currentTransform.theta;
 	};
@@ -368,12 +370,12 @@ var Canvas = window.Canvas || {};
    * @param e {Event} the mouse event
    * @param targetImg {Object} image that the mouse is hovering, if so.
    */
-	Canvas.Element.prototype.setCursor = function(e, targetImg) {
+	Canvas.Element.prototype.setCursor = function(mp, targetImg) {
 		if (!targetImg) {
 			this._oElement.style.cursor = 'default';
 		}
 		else { 
-			var corner = this.findTargetCorner(e, targetImg);
+			var corner = this.findTargetCorner(mp, targetImg);
 			if (!corner) {
 				this._oElement.style.cursor = 'move';
 			}
@@ -528,15 +530,13 @@ var Canvas = window.Canvas || {};
    * @param e {Event} the mouse event
    * @param hovering {Boolean} whether or not we have the mouse button pressed
    */	
-	Canvas.Element.prototype.findTargetImage = function(e, hovering) {
+	Canvas.Element.prototype.findTargetImage = function(mp, hovering) {
 		// http://www.geog.ubc.ca/courses/klink/gis.notes/ncgia/u32.html
 		// http://idav.ucdavis.edu/~okreylos/TAship/Spring2000/PointInPolygon.html
-		var ex = e.clientX;
-		var ey = e.clientY;
 		for (var i = this._aImages.length-1; i >= 0; i -= 1) {
 			// we iterate through each image. If target found then return target
 			var iLines = this._getImageLines(this._aImages[i].oCoords);
-			var xpoints = this._findCrossPoints(ex, ey, iLines);
+			var xpoints = this._findCrossPoints(mp, iLines);
 			
 			// if xcount is odd then we clicked inside the image
 			// For the specific case of square images xcount == 1 in all true cases
@@ -561,38 +561,38 @@ var Canvas = window.Canvas || {};
    * @param ey {Number} y coordinate of the mouse
    * @param oCoords {Object} Coordinates of the image being evaluated
    */		
-	Canvas.Element.prototype._findCrossPoints = function(ex, ey, oCoords) {
+	Canvas.Element.prototype._findCrossPoints = function(mp, oCoords) {
 		var b1, b2, a1, a2, xi, yi;
 		var xcount = 0;
 		var iLine = null;
 		for (lineKey in oCoords) {
 			iLine = oCoords[lineKey];
 			// optimisation 1: line below dot. no cross
-			if ((iLine.o.y < ey) && (iLine.d.y < ey)) {
+			if ((iLine.o.y < mp.ey) && (iLine.d.y < mp.ey)) {
 				continue;
 			}
 			// optimisation 2: line above dot. no cross
-			if ((iLine.o.y >= ey) && (iLine.d.y >= ey)) {
+			if ((iLine.o.y >= mp.ey) && (iLine.d.y >= mp.ey)) {
 				continue;
 			}
 			// optimisation 3: vertical line case
-			if ((iLine.o.x == iLine.d.x) && (iLine.o.x >= ex)) { 
+			if ((iLine.o.x == iLine.d.x) && (iLine.o.x >= mp.ex)) { 
 				xi = iLine.o.x;
-				yi = ey;
+				yi = mp.ey;
 			}
 			// calculate the intersection point
 			else {
-				b1 = 0; //(y2-ey)/(x2-ex); 
+				b1 = 0; //(y2-mp.ey)/(x2-mp.ex); 
 				b2 = (iLine.d.y-iLine.o.y)/(iLine.d.x-iLine.o.x); 
-				a1 = ey-b1*ex;
+				a1 = mp.ey-b1*mp.ex;
 				a2 = iLine.o.y-b2*iLine.o.x;
 
 				xi = - (a1-a2)/(b1-b2); 
 				yi = a1+b1*xi; 
 			}
 		
-			// dont count xi < ex cases
-			if (xi >= ex) { 
+			// dont count xi < mp.ex cases
+			if (xi >= mp.ex) { 
 				xcount += 1;
 			}
 			// optimisation 4: specific for square images
@@ -609,19 +609,32 @@ var Canvas = window.Canvas || {};
    * @param e {Event} the mouse event
    * @param oImg {Object} the image object
    */
-	Canvas.Element.prototype.findTargetCorner = function(e, oImg) {
-		var ex = e.clientX;
-		var ey = e.clientY;
+	Canvas.Element.prototype.findTargetCorner = function(mp, oImg) {
 		var xpoints = null;
 		
 		var corners = ['tl','tr','br','bl'];
 		for (var i in oImg.oCoords) {
-			xpoints = this._findCrossPoints(ex, ey, this._getImageLines(oImg.oCoords[i].corner));
+			xpoints = this._findCrossPoints(mp, this._getImageLines(oImg.oCoords[i].corner));
 			if (xpoints % 2 == 1 && xpoints != 0) {
 				return i;
 			}		
 		}
 		return false;
+	};
+
+	/**
+   * Determine which one of the four corners has been clicked
+   * @method findTargetCorner
+   * @param e {Event} the mouse event
+   * @param oImg {Object} the image object
+   */
+	Canvas.Element.prototype.findMousePosition = function(e) {
+		// srcElement = IE
+		var parentNode = (e.srcElement) ? e.srcElement.parentNode : e.target.parentNode;
+		return {
+			ex: e.clientX + document.documentElement.scrollLeft - parentNode.offsetLeft,
+			ey: e.clientY + document.documentElement.scrollTop - parentNode.offsetTop
+		};
 	};
 
 	/**
