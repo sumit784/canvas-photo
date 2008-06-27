@@ -125,7 +125,12 @@ var Canvas = window.Canvas || {};
 			/// YAHOO.util.Dom.addClass(this._oElement, Canvas.Element.CSS_CANVAS);
 		}
 		else {
-			var canvasEl = document.createElement('canvas');
+			if (YAHOO.env.ua.ie) {
+				var canvasEl = excanvas(document.createElement('canvas'));	
+			}
+			else {
+				var canvasEl = document.createElement('canvas');
+			}
 			canvasEl.id = el + '';
 			var oCanvas = document.body.insertBefore(canvasEl, document.body.firstChild);
 			this._oElement = document.getElementById(el + '');
