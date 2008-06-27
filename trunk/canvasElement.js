@@ -25,38 +25,38 @@ var Canvas = window.Canvas || {};
 	
 	/**
 	 * From YUI (2.4.0?)
-     * We want to be able to use getElementsByTagName as a collection
-     * to attach a group of events to.  Unfortunately, different 
-     * browsers return different types of collections.  This function
-     * tests to determine if the object is array-like.  It will also 
-     * fail if the object is an array, but is empty.
-     * @method _isValidCollection
-     * @param o the object to test
-     * @return {boolean} true if the object is array-like and populated
-     * @static
-     * @private
-     */
-    function isValidCollection(o) {
-        try {
-            return ( o                     && // o is something
-                     typeof o !== "string" && // o is not a string
-                     o.length              && // o is indexed
-                     !o.tagName            && // o is not an HTML element
-                     !o.alert              && // o is not a window
-                     typeof o[0] !== "undefined" );
-        } catch(ex) {
-            return false;
-        }
-    }
+   * We want to be able to use getElementsByTagName as a collection
+   * to attach a group of events to.  Unfortunately, different 
+   * browsers return different types of collections.  This function
+   * tests to determine if the object is array-like.  It will also 
+   * fail if the object is an array, but is empty.
+   * @method _isValidCollection
+   * @param o the object to test
+   * @return {boolean} true if the object is array-like and populated
+   * @static
+   * @private
+   */
+  function isValidCollection(o) {
+      try {
+          return ( o                     && // o is something
+                   typeof o !== "string" && // o is not a string
+                   o.length              && // o is indexed
+                   !o.tagName            && // o is not an HTML element
+                   !o.alert              && // o is not a window
+                   typeof o[0] !== "undefined" );
+      } catch(ex) {
+          return false;
+      }
+  }
 
 	/**
 	 * Constant for the default CSS class name that represents a Canvas
-     * @property Canvas.Element.CSS_CANVAS
-     * @static
-     * @final
-     * @type String
-     */
-    /// Canvas.Element.CSS_CANVAS = "canvas-module";	
+   * @property Canvas.Element.CSS_CANVAS
+   * @static
+   * @final
+   * @type String
+   */
+  /// Canvas.Element.CSS_CANVAS = "canvas-module";	
 	Canvas.Element.prototype.fillBackground = true;
 	Canvas.Element.prototype.showcorners = false;
 	Canvas.Element.prototype.photoborder = true;
@@ -64,57 +64,55 @@ var Canvas = window.Canvas || {};
 	Canvas.Element.prototype._backgroundImg = null;
 	
 	/**
-     * The object literal containing mouse position if clicked in an empty area (no image)
-     * @property _groupSelector
-     * @type object
-     */
+   * The object literal containing mouse position if clicked in an empty area (no image)
+   * @property _groupSelector
+   * @type object
+   */
 	Canvas.Element.prototype._groupSelector = null;
 	
 	/**
-     * The array element that contains all the images of the canvas
-     * @property _aImages
-     * @type object
-     */
+   * The array element that contains all the images of the canvas
+   * @property _aImages
+   * @type object
+   */
 	Canvas.Element.prototype._aImages = null;
 	
 	/**
-     * The element that references the canvas interface implementation
-     * @property _oContext
-     * @type object
-     */
+   * The element that references the canvas interface implementation
+   * @property _oContext
+   * @type object
+   */
 	Canvas.Element.prototype._oContext = null;
 	
 	/**
-     * The main element that contains the canvas
-     * @property _oElement
-     * @type object
-     */
+   * The main element that contains the canvas
+   * @property _oElement
+   * @type object
+   */
 	Canvas.Element.prototype._oElement = null;
 
 	/**
-     * The object literal containing config parameters
-     * @property _oConfig
-     * @type object
-     */
+   * The object literal containing config parameters
+   * @property _oConfig
+   * @type object
+   */
 	Canvas.Element.prototype._oConfig = null;
 	
 	/**
-     * The object literal containing the current x,y params of the transformation
-     * @property _currentTransform
-     * @type object
-     */
+   * The object literal containing the current x,y params of the transformation
+   * @property _currentTransform
+   * @type object
+   */
 	Canvas.Element.prototype._currentTransform = null;
-	
-	// 
-	
+		
 	/**
-     * The Canvas class's initialization method. This method is automatically 
-     * called by the constructor, and sets up all DOM references for 
-     * pre-existing markup, and creates required markup if it is not 
-     * already present.
-     * @method _initElement
-     * @param el {HTMLElement | String} el The element representing the Canvas
-     */
+   * The Canvas class's initialization method. This method is automatically 
+   * called by the constructor, and sets up all DOM references for 
+   * pre-existing markup, and creates required markup if it is not 
+   * already present.
+   * @method _initElement
+   * @param el {HTMLElement | String} el The element representing the Canvas
+   */
 	Canvas.Element.prototype._initElement = function(el) {
 		if(YAHOO.util.Dom.inDocument(el)) {
 			if(YAHOO.lang.isString(el)) {
@@ -141,20 +139,20 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * The custom events initialization method. 
-     * @method _initCustomEvents
-     */
+   * The custom events initialization method. 
+   * @method _initCustomEvents
+   */
 	Canvas.Element.prototype._initCustomEvents = function() {
 		this.beforeRenderEvent = new YAHOO.util.CustomEvent('beforeRenderEvent', this, true);	
 	}
 	
 	/**
-     * For now we use an object literal without methods to store the config params
-     * @method _initConfig
-     * @param oConfig {Object} userConfig The configuration Object literal 
-     * containing the configuration that should be set for this module. 
-     * See configuration documentation for more details.
-     */
+   * For now we use an object literal without methods to store the config params
+   * @method _initConfig
+   * @param oConfig {Object} userConfig The configuration Object literal 
+   * containing the configuration that should be set for this module. 
+   * See configuration documentation for more details.
+   */
 	Canvas.Element.prototype._initConfig = function(oConfig) {
 		this._oConfig = oConfig;
 		this._oElement.width = this._oConfig.width;
@@ -164,10 +162,10 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Adds main mouse listeners to the whole canvas
-     * @method _initEvents
-     * See configuration documentation for more details.
-     */
+   * Adds main mouse listeners to the whole canvas
+   * @method _initEvents
+   * See configuration documentation for more details.
+   */
 	Canvas.Element.prototype._initEvents = function() {
 		YAHOO.util.Event.on(this._oElement, 'mousedown', this.onMouseDown, this, true);
 		YAHOO.util.Event.on(this._oElement, 'mouseup', this.onMouseUp, this, true);
@@ -176,9 +174,9 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * It creates a secondary canvas to contain all the images are not being translated/rotated/scaled
-     * @method _createContainer
-     */
+   * It creates a secondary canvas to contain all the images are not being translated/rotated/scaled
+   * @method _createContainer
+   */
 	Canvas.Element.prototype._createContainer = function() {
 		if (YAHOO.env.ua.ie) {
 			var canvasEl = excanvas(document.createElement('canvas'));	
@@ -221,12 +219,12 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Method that defines the actions when mouse is released on canvas.
+   * Method that defines the actions when mouse is released on canvas.
 	 * The method resets the currentTransform parameters, store the image corner
 	 * position in the image object and render the canvas on top.
-     * @method onMouseUp
-     * @param e {Event} Event object fired on mouseup
-     */
+   * @method onMouseUp
+   * @param e {Event} Event object fired on mouseup
+   */
 	Canvas.Element.prototype.onMouseUp = function(e) {
 		if (this._aImages == null) {
 			return;
@@ -243,13 +241,13 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Method that defines the actions when mouse is clicked on canvas.
+   * Method that defines the actions when mouse is clicked on canvas.
 	 * The method inits the currentTransform parameters and renders all the
 	 * canvas so the current image can be placed on the top canvas and the rest
 	 * in on the container one.
-     * @method onMouseDown
-     * @param e {Event} Event object fired on mousedown
-     */
+   * @method onMouseDown
+   * @param e {Event} Event object fired on mousedown
+   */
 	Canvas.Element.prototype.onMouseDown = function(e) {
 		// ignore if something else is already going on
 		if (this._currentTransform != null || this._aImages == null) {
@@ -283,14 +281,14 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Method that defines the actions when mouse is hovering the canvas.
+   * Method that defines the actions when mouse is hovering the canvas.
 	 * The currentTransform parameter will definde whether the user is rotating/scaling/translating
 	 * an image or neither of them (only hovering). A group selection is also possible and would cancel
 	 * all any other type of action.
 	 * In case of an image transformation only the top canvas will be rendered.
-     * @method onMouseMove
-     * @param e {Event} Event object fired on mousemove
-     */
+   * @method onMouseMove
+   * @param e {Event} Event object fired on mousemove
+   */
 	Canvas.Element.prototype.onMouseMove = function(e) {
 		if (this._aImages == null) {
 			return;
@@ -325,20 +323,20 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Translate image
-     * @method translateImage
-     * @param e {Event} the mouse event
-     */	
+   * Translate image
+   * @method translateImage
+   * @param e {Event} the mouse event
+   */	
 	Canvas.Element.prototype.translateImage = function(e) {
 		this._currentTransform.target.left = e.clientX - this._currentTransform.offsetX;
 		this._currentTransform.target.top = e.clientY - this._currentTransform.offsetY;
 	};
 	
 	/**
-     * Scale image
-     * @method scaleImage
-     * @param e {Event} the mouse event
-     */	
+   * Scale image
+   * @method scaleImage
+   * @param e {Event} the mouse event
+   */	
 	Canvas.Element.prototype.scaleImage = function(e) {
 		var lastLen = Math.sqrt(Math.pow(this._currentTransform.ey - this._currentTransform.top, 2) +
 	                            Math.pow(this._currentTransform.ex - this._currentTransform.left, 2));
@@ -350,10 +348,10 @@ var Canvas = window.Canvas || {};
     };
 
 	/**
-     * Rotate image
-     * @method rotateImage
-     * @param e {Event} the mouse event
-     */	
+   * Rotate image
+   * @method rotateImage
+   * @param e {Event} the mouse event
+   */	
 	Canvas.Element.prototype.rotateImage = function(e) {
 		var lastAngle = Math.atan2(this._currentTransform.ey - this._currentTransform.top,
 		                           this._currentTransform.ex - this._currentTransform.left);
@@ -364,12 +362,12 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Method to set the cursor image depending on where the user is hovering.
+   * Method to set the cursor image depending on where the user is hovering.
  	 * Note: very buggy in Opera
-     * @method setCursor
-     * @param e {Event} the mouse event
-     * @param targetImg {Object} image that the mouse is hovering, if so.
-     */
+   * @method setCursor
+   * @param e {Event} the mouse event
+   * @param targetImg {Object} image that the mouse is hovering, if so.
+   */
 	Canvas.Element.prototype.setCursor = function(e, targetImg) {
 		if (!targetImg) {
 			this._oElement.style.cursor = 'default';
@@ -400,11 +398,11 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Method to add an image to the canvas.
+   * Method to add an image to the canvas.
  	 * It actually only pushes the images in an array that will be rendered later in the canvas.
-     * @method addImage
-     * @param oImg {Object} Image elment to attach
-     */
+   * @method addImage
+   * @param oImg {Object} Image elment to attach
+   */
 	Canvas.Element.prototype.addImage = function(oImg) {
 		// this._aImages[this._aImages.length] = oImg;
 		if(YAHOO.lang.isNull(this._aImages)) {
@@ -416,10 +414,10 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Method to render both the top canvas and the secondary container canvas.
-     * @method renderAll
-     * @param allOnTop {Boolean} Whether we want to force all images to be rendered on the top canvas
-     */	
+   * Method to render both the top canvas and the secondary container canvas.
+   * @method renderAll
+   * @param allOnTop {Boolean} Whether we want to force all images to be rendered on the top canvas
+   */	
 	Canvas.Element.prototype.renderAll = function(allOnTop) {
 		// when allOnTop equals true all images will be rendered in the top canvas.
 		// This is used for actions like toDataUrl that needs to take some actions on a unique canvas.
@@ -442,10 +440,10 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Method to render only the top canvas.
+   * Method to render only the top canvas.
 	 * Also used to render the group selection box.
-     * @method renderTop
-     */
+   * @method renderTop
+   */
 	Canvas.Element.prototype.renderTop = function() {
 		// this.beforeRenderEvent.fire();  // placeholder
 		this._oContextTop.clearRect(0,0,parseInt(this._oConfig.width), parseInt(this._oConfig.height));
@@ -461,11 +459,11 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Method that finally uses the canvas function to render the image
-     * @method drawImageElement
-     * @param context {Object} canvas context where the image must be rendered
-     * @param oImg {Object} the image object
-     */
+   * Method that finally uses the canvas function to render the image
+   * @method drawImageElement
+   * @param context {Object} canvas context where the image must be rendered
+   * @param oImg {Object} the image object
+   */
 	Canvas.Element.prototype.drawImageElement = function(context, oImg) {
 		var offsetY = oImg.height / 2;
 		var offsetX = oImg.width / 2;
@@ -498,10 +496,10 @@ var Canvas = window.Canvas || {};
 	};
 		
 	/**
-     * Method that returns an object with the image lines in it given the coordinates of the corners
-     * @method _getImageLines
-     * @param oCoords {Object} coordinates of the image corners
-     */
+   * Method that returns an object with the image lines in it given the coordinates of the corners
+   * @method _getImageLines
+   * @param oCoords {Object} coordinates of the image corners
+   */
 	Canvas.Element.prototype._getImageLines = function(oCoords) {
 		return {
 			topline: { 
@@ -524,12 +522,12 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Method that determines what picture are we clicking on
-     * Applied one implementation of 'point inside polygon' algorithm
-     * @method findTargetImage
-     * @param e {Event} the mouse event
-     * @param hovering {Boolean} whether or not we have the mouse button pressed
-     */	
+   * Method that determines what picture are we clicking on
+   * Applied one implementation of 'point inside polygon' algorithm
+   * @method findTargetImage
+   * @param e {Event} the mouse event
+   * @param hovering {Boolean} whether or not we have the mouse button pressed
+   */	
 	Canvas.Element.prototype.findTargetImage = function(e, hovering) {
 		// http://www.geog.ubc.ca/courses/klink/gis.notes/ncgia/u32.html
 		// http://idav.ucdavis.edu/~okreylos/TAship/Spring2000/PointInPolygon.html
@@ -556,13 +554,13 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Helper method to determine how many cross points are between the 4 image edges
-     * and the horizontal line determined by the position of our mouse when clicked on canvas
-     * @method _findCrossPoints
-     * @param ex {Number} x coordinate of the mouse
-     * @param ey {Number} y coordinate of the mouse
-     * @param oCoords {Object} Coordinates of the image being evaluated
-     */		
+   * Helper method to determine how many cross points are between the 4 image edges
+   * and the horizontal line determined by the position of our mouse when clicked on canvas
+   * @method _findCrossPoints
+   * @param ex {Number} x coordinate of the mouse
+   * @param ey {Number} y coordinate of the mouse
+   * @param oCoords {Object} Coordinates of the image being evaluated
+   */		
 	Canvas.Element.prototype._findCrossPoints = function(ex, ey, oCoords) {
 		var b1, b2, a1, a2, xi, yi;
 		var xcount = 0;
@@ -606,11 +604,11 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * Determine which one of the four corners has been clicked
-     * @method findTargetCorner
-     * @param e {Event} the mouse event
-     * @param oImg {Object} the image object
-     */
+   * Determine which one of the four corners has been clicked
+   * @method findTargetCorner
+   * @param e {Event} the mouse event
+   * @param oImg {Object} the image object
+   */
 	Canvas.Element.prototype.findTargetCorner = function(e, oImg) {
 		var ex = e.clientX;
 		var ey = e.clientY;
@@ -627,13 +625,13 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Draw image border, if any. That includes both normal border and polaroid border
-     * @method drawBorder
-     * @param context {Object} context (layer) where the border will be drawn
-     * @param oImg {Object} the Image object
-     * @param offsetX {Number} The horizontal offset applied from the (0,0) of the canvas axis
-     * @param offsetY {Number} The vertical offset applied from the (0,0) of the canvas axis
-     */	
+   * Draw image border, if any. That includes both normal border and polaroid border
+   * @method drawBorder
+   * @param context {Object} context (layer) where the border will be drawn
+   * @param oImg {Object} the Image object
+   * @param offsetX {Number} The horizontal offset applied from the (0,0) of the canvas axis
+   * @param offsetY {Number} The vertical offset applied from the (0,0) of the canvas axis
+   */	
 	Canvas.Element.prototype.drawBorder = function(context, oImg, offsetX, offsetY) {
 		var outlinewidth = 2;
 		context.fillStyle = 'rgba(0, 0, 0, .3)';
@@ -643,13 +641,13 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Draw image corners to help visual understanding of the UI (if required)
-     * @method drawCorners
-     * @param context {Object} context (layer) where the corners will be drawn
-     * @param oImg {Object} the Image object
-     * @param offsetX {Number} The horizontal offset applied from the (0,0) of the canvas axis
-     * @param offsetY {Number} The vertical offset applied from the (0,0) of the canvas axis
-     */	
+   * Draw image corners to help visual understanding of the UI (if required)
+   * @method drawCorners
+   * @param context {Object} context (layer) where the corners will be drawn
+   * @param oImg {Object} the Image object
+   * @param offsetX {Number} The horizontal offset applied from the (0,0) of the canvas axis
+   * @param offsetY {Number} The vertical offset applied from the (0,0) of the canvas axis
+   */	
 	Canvas.Element.prototype.drawCorners = function(context, oImg, offsetX, offsetY) {
 		context.fillStyle = "rgba(0, 200, 50, 0.5)";
 		context.fillRect(-offsetX, -offsetY, oImg.cornersize, oImg.cornersize);
@@ -659,11 +657,11 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * Export the specific canvas element to an Image. Created and rendered on the browser.
-     * Beware of crossbrowser support.
-     * @method canvasTo
-     * @param format {String} the format of the output image. Either jpeg or png.
-     */	
+   * Export the specific canvas element to an Image. Created and rendered on the browser.
+   * Beware of crossbrowser support.
+   * @method canvasTo
+   * @param format {String} the format of the output image. Either jpeg or png.
+   */	
 	Canvas.Element.prototype.canvasTo = function(format) {
 		this.renderAll(true);
 		if (format == 'jpeg' || format == 'png') {
