@@ -631,9 +631,12 @@ var Canvas = window.Canvas || {};
 	Canvas.Element.prototype.findMousePosition = function(e) {
 		// srcElement = IE
 		var parentNode = (e.srcElement) ? e.srcElement.parentNode : e.target.parentNode;
+		var isSafari2 = (YAHOO.env.ua.webkit != 0 && YAHOO.env.ua.webkit < 420);
+		var safariOffsetLeft = (isSafari2) ? e.target.ownerDocument.body.offsetLeft : 0;
+		var safariOffsetTop = (isSafari2) ? e.target.ownerDocument.body.offsetTop : 0;
 		return {
-			ex: e.clientX + document.documentElement.scrollLeft - parentNode.offsetLeft,
-			ey: e.clientY + document.documentElement.scrollTop - parentNode.offsetTop
+			ex: e.clientX + document.documentElement.scrollLeft - parentNode.offsetLeft - safariOffsetLeft,
+			ey: e.clientY + document.documentElement.scrollTop - parentNode.offsetTop - safariOffsetTop
 		};
 	};
 
