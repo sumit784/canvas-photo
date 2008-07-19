@@ -17,43 +17,39 @@ var Canvas = window.Canvas || {};
 		this.setImageCoords();
 	};
 	
-	function getVerifiedElement() {
 		
-	}
-	
 	/**
 	 * Constant for the default CSS class name that represents a Canvas
-     * @property Canvas.Img.CSS_CANVAS
-     * @static
-     * @final
-     * @type String
-     */
-    Canvas.Img.CSS_CANVAS = "canvas-img";
+	 * @property Canvas.Img.CSS_CANVAS
+	 * @static
+	 * @final
+	 * @type String
+	 */
+	Canvas.Img.CSS_CANVAS = "canvas-img";
 	
 	/**
-     * Constant representing the Module's configuration properties
-     * @property DEFAULT_CONFIG
-     * @private
-     * @final
-     * @type Object
-     */
-     var DEFAULT_CONFIG = {
-
+	 * Constant representing the Module's configuration properties
+	 * @property DEFAULT_CONFIG
+	 * @private
+	 * @final
+	 * @type Object
+	 */
+	var DEFAULT_CONFIG = {	
 		"TOP": { 
 		    key: "top", 
 		    value: 10 
 		},
-
+		
 		"LEFT": { 
 		    key: "left", 
 		    value: 10
 		},
-
+		
 		"ANGLE": { 
 		    key: "angle", 
 		    value: 0  
 		},
-
+		
 		"SCALE-X": { 
 		    key: "scalex", 
 		    value: 1
@@ -79,21 +75,20 @@ var Canvas = window.Canvas || {};
 			key: "randomposition",
 			value: true
 		}
-     };
+	};
 	
 	/**
-     * The main element that contains the canvas
-     * @property _oElement
-     * @type object
-     */
+	 * The main element that contains the canvas
+	 * @property _oElement
+	 * @type object
+	 */
 	Canvas.Img.prototype._oElement = null;
 
 	/**
-     * The object literal containing config parameters
-     * @property oConfig
-     * @type object
-     */
-	
+	 * The object literal containing config parameters
+	 * @property oConfig
+	 * @type object
+	 */
 	Canvas.Img.prototype.top = null;
 	Canvas.Img.prototype.left = null;
 	Canvas.Img.prototype.maxwidth = null;
@@ -112,11 +107,11 @@ var Canvas = window.Canvas || {};
 	Canvas.Img.prototype.cornervisibility = false;
 	
 	/**
-     * The Image class's initialization method. This method is automatically 
-     * called by the constructor.
-     * @method _initElement
-     * @param {HTMLElement | String} el The element representing the image
-     */
+	 * The Image class's initialization method. This method is automatically 
+	 * called by the constructor.
+	 * @method _initElement
+	 * @param {HTMLElement | String} el The element representing the image
+	 */
 	Canvas.Img.prototype._initElement = function(el) {
 		if(YAHOO.util.Dom.inDocument(el)) {
 			if(YAHOO.lang.isString(el)) {
@@ -133,14 +128,14 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * For now we use an object literal without methods to store the config params
+	 * For now we use an object literal without methods to store the config params
 	 * It checks if the user has passed any values through oConfig. Otherwise,
 	 * it sets the values defined in DEFAULT_CONFIG
-     * @method _initConfig
-     * @param {Object} userConfig The configuration Object literal 
-     * containing the configuration that should be set for this module. 
-     * See configuration documentation for more details.
-     */
+	 * @method _initConfig
+	 * @param {Object} userConfig The configuration Object literal 
+	 * containing the configuration that should be set for this module. 
+	 * See configuration documentation for more details.
+	 */
 	Canvas.Img.prototype._initConfig = function(oConfig) {
 		var sKey;
 		for (sKey in DEFAULT_CONFIG) {
@@ -179,11 +174,11 @@ var Canvas = window.Canvas || {};
 	 * Method that resizes an image depending on whether maxwidth and maxheight are set up.
 	 * Width and height have to mantain the same proportion in the final image as it was in the 
 	 * initial one.
-     * @method getNormalizedSize
-     * @param {Object} userConfig The configuration Object literal 
-     * @param {Integer} maximum width of the image in px 
-     * @param {Integer} maximum height of the image in px 
-     */	
+	 * @method getNormalizedSize
+	 * @param {Object} userConfig The configuration Object literal 
+	 * @param {Integer} maximum width of the image in px 
+	 * @param {Integer} maximum height of the image in px 
+	 */	
 	Canvas.Img.prototype.getNormalizedSize = function(oImg, maxwidth, maxheight) {
 		if (maxheight && maxwidth && (oImg.width > oImg.height && (oImg.width / oImg.height) < (maxwidth / maxheight))) {
 			// console.log('cas 2');
@@ -220,11 +215,11 @@ var Canvas = window.Canvas || {};
 	/**
 	 * Sets random angle, top and left of the image if the user hasnt specified
 	 * specific ones.
-     * @method _setRandomProperties
-     * @param oConfig {Object} userConfig The configuration Object literal 
-     * containing the configuration that should be set for this module. 
-     * See configuration documentation for more details.
-     */
+	 * @method _setRandomProperties
+	 * @param oConfig {Object} userConfig The configuration Object literal 
+	 * containing the configuration that should be set for this module. 
+	 * See configuration documentation for more details.
+	 */
 	Canvas.Img.prototype._setRandomProperties = function(oConfig) {
 		if (oConfig.angle == null) { // use YUI.lang
 			this.angle = (Math.random() * 40) - 20;
@@ -276,10 +271,10 @@ var Canvas = window.Canvas || {};
 	};
 	
 	/**
-     * It sets image corner position coordinates based on current angle,
+	 * It sets image corner position coordinates based on current angle,
 	 * width and height.
-     * @method setImageCoords
-     */
+	 * @method setImageCoords
+	 */
 	Canvas.Img.prototype.setImageCoords = function() {
 		this.left = parseInt(this.left);
 		this.top = parseInt(this.top);
@@ -320,10 +315,10 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-     * It sets the coordinates of the draggable boxes in the corners of
+	 * It sets the coordinates of the draggable boxes in the corners of
 	 * the image used to scale/rotate it.
-     * @method setCornerCoords
-     */	
+	 * @method setCornerCoords
+	 */	
 	Canvas.Img.prototype.setCornerCoords = function() {
 		// Calculate the rotate boxes.
 		var coords = this.oCoords;
