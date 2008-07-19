@@ -19,36 +19,6 @@ var Canvas = window.Canvas || {};
 		this._initCustomEvents();
 	};
 	
-	function getVerifiedElement() {
-		
-	}
-	
-	/**
-	 * From YUI (2.4.0?)
-   * We want to be able to use getElementsByTagName as a collection
-   * to attach a group of events to.  Unfortunately, different 
-   * browsers return different types of collections.  This function
-   * tests to determine if the object is array-like.  It will also 
-   * fail if the object is an array, but is empty.
-   * @method _isValidCollection
-   * @param o the object to test
-   * @return {boolean} true if the object is array-like and populated
-   * @static
-   * @private
-   */
-  function isValidCollection(o) {
-      try {
-          return ( o                     && // o is something
-                   typeof o !== "string" && // o is not a string
-                   o.length              && // o is indexed
-                   !o.tagName            && // o is not an HTML element
-                   !o.alert              && // o is not a window
-                   typeof o[0] !== "undefined" );
-      } catch(ex) {
-          return false;
-      }
-  }
-
 	/**
 	 * Constant for the default CSS class name that represents a Canvas
    * @property Canvas.Element.CSS_CANVAS
