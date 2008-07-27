@@ -11,6 +11,9 @@ var Canvas = window.Canvas || {};
 	 * @param el {HTMLElement | String} Container element for the canvas.
 	 */
 	Canvas.Element = function(el, oConfig) {
+		if (el == '') {
+			return;
+		}
 		this._initElement(el);
 		this._initConfig(oConfig);
 		this._createCanvasBackground();
