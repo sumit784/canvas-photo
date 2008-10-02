@@ -30,7 +30,8 @@
 			var img = [];
 			return {
 				init: function() {
-					canvas1 = new Canvas.Element('canvid1',  { width: YD.getViewportWidth() - 5, height: YD.getViewportHeight() - 5 });			
+					canvas1 = new Canvas.Element();
+					canvas1.init('canvid1',  { width: YD.getViewportWidth() - 5, height: YD.getViewportHeight() - 5 });			
 					img[img.length] = new Canvas.Img('img1', {});
 					img[img.length] = new Canvas.Img('img2', {});
 					img[img.length] = new Canvas.Img('img3', {});
