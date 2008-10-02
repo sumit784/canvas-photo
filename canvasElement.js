@@ -11,9 +11,6 @@ var Canvas = window.Canvas || {};
 	 * @param el {HTMLElement | String} Container element for the canvas.
 	 */
 	Canvas.Element = function(el, oConfig) {
-		if (el == '') {
-			return;
-		}
 		this._initElement(el);
 		this._initConfig(oConfig);
 		this._createCanvasBackground();
@@ -112,11 +109,16 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-	 * The custom events initialization method. 
-	 * @method _initCustomEvents
-	 */
+   * The custom events initialization method. 
+   * @method _initCustomEvents
+   */
 	Canvas.Element.prototype._initCustomEvents = function() {
-		this.beforeRenderEvent = new YAHOO.util.CustomEvent('beforeRenderEvent', this, true);	
+		this.onRotateStart = new Canvas.CustomEvent('onRotateStart');
+		this.onRotateMove = new Canvas.CustomEvent('onRotateMove');		
+		this.onRotateComplete = new Canvas.CustomEvent('onRotateComplete');
+		this.onDragStart = new Canvas.CustomEvent('onDragStart');	
+		this.onDragMove = new Canvas.CustomEvent('onDragMove');
+		this.onDragComplete = new Canvas.CustomEvent('onDragComplete');
 	}
 	
 	/**
@@ -157,7 +159,7 @@ var Canvas = window.Canvas || {};
 		else {
 			var canvasEl = document.createElement('canvas');
 		}
-		canvasEl.id = 'canvas-container';
+		canvasEl.id = this._oElement.id + '-canvas-container';
 		var oContainer = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
 		oContainer.width = this._oConfig.width;
 		oContainer.height = this._oConfig.height;
@@ -174,7 +176,7 @@ var Canvas = window.Canvas || {};
 		else {
 			var canvasEl = document.createElement('canvas');
 		}
-		canvasEl.id = 'canvas-background';
+		canvasEl.id = this._oElement.id + '-canvas-background';
 		var oBackground = this._oElement.parentNode.insertBefore(canvasEl, this._oElement);
 		oBackground.width = this._oConfig.width;
 		oBackground.height = this._oConfig.height;
@@ -205,6 +207,13 @@ var Canvas = window.Canvas || {};
 		if (this._currentTransform) {
 			// determine the new coords everytime the image changes its position
 			this._currentTransform.target.setImageCoords();
+		}
+		if (this._currentTransform != null && this._currentTransform.action == "rotate") {
+			// fire custom rotate event handler
+			this.onRotateComplete.fire(e);
+		} else if (this._currentTransform != null && this._currentTransform.action == "drag") {
+			// fire custom drag event handler
+			this.onDragComplete.fire(e);
 		}
 		this._currentTransform = null;
 		this._groupSelector = null;
@@ -238,6 +247,13 @@ var Canvas = window.Canvas || {};
 			// determine if it's a drag or rotate case
 			// rotate and scale will happen at the same time
 			var action = (!this.findTargetCorner(mp, oImg)) ? 'drag' : 'rotate';
+			if (action == "rotate") {
+				// fire custom rotate event handler
+				this.onRotateMove.fire(e);
+			} else if (action == "drag") {
+				// fire custom drag event handler
+				this.onDragMove.fire(e);
+			}
 			
 			this._currentTransform = { 
 				target: oImg,
@@ -253,7 +269,6 @@ var Canvas = window.Canvas || {};
 			// we must render all so the active image is placed in the canvastop
 			this.renderAll(false);
 		}
-		// alert(this._oElement.className);
 	};
 	
 	/**
@@ -282,17 +297,19 @@ var Canvas = window.Canvas || {};
 			// We won't do that while dragging or rotating in order to improve the
 			// performance.
 			var targetImg = this.findTargetImage(mp, true);
-			
+
 			// set mouse image
 			this.setCursor(mp, targetImg);
 		}
 		else {
 			if (this._currentTransform.action == 'rotate') {
 				this.rotateImage(mp);
-				this.scaleImage(mp);			
+				this.scaleImage(mp);
+				this.onRotateMove.fire(e);
 			}		
 			else {
 				this.translateImage(mp);
+				this.onDragMove.fire(e);
 			}
 			// only commit here. when we are actually moving the pictures
 			this.renderTop();
@@ -630,11 +647,15 @@ var Canvas = window.Canvas || {};
 		// srcElement = IE
 		var parentNode = (e.srcElement) ? e.srcElement.parentNode : e.target.parentNode;
 		var isSafari2 = (YAHOO.env.ua.webkit != 0 && YAHOO.env.ua.webkit < 420);
-		var safariOffsetLeft = (isSafari2) ? e.target.ownerDocument.body.offsetLeft : 0;
-		var safariOffsetTop = (isSafari2) ? e.target.ownerDocument.body.offsetTop : 0;
+		var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+		var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+		var safariOffsetLeft = (isSafari2) ? e.target.ownerDocument.body.offsetLeft + scrollLeft : 0;
+		var safariOffsetTop = (isSafari2) ? e.target.ownerDocument.body.offsetTop + scrollTop : 0;
 		return {
-			ex: e.clientX + document.documentElement.scrollLeft - parentNode.offsetLeft - safariOffsetLeft,
-			ey: e.clientY + document.documentElement.scrollTop - parentNode.offsetTop - safariOffsetTop
+			ex: e.clientX + scrollLeft - parentNode.offsetLeft - safariOffsetLeft,
+			ey: e.clientY + scrollTop - parentNode.offsetTop - safariOffsetTop,
+			screenX: e.screenX,
+			screenY: e.screenY
 		};
 	};
 
@@ -681,6 +702,36 @@ var Canvas = window.Canvas || {};
 		if (format == 'jpeg' || format == 'png') {
 			return this._oElement.toDataURL('image/'+format);
 		}
+	};
+	
+	/**
+	 * Hook onto "interesting moments" in the lifecycle of Canvas Element
+	 * @method subscribe
+	 * @param type {String} The type of event.
+	 * @param fn {Function} The handler function
+	 * @param scope {Object} An object to become the execution scope of the handler.
+	 */
+	Canvas.Element.prototype.subscribe = function(type, fn, scope) {
+		if(typeof this[type] == "undefined") {
+			throw new Error("Invalid custom event name: " + type);
+		}
+		if(typeof fn != "function") {
+			throw new Error("Invalid handler function.");
+		}
+		this[type].scope = scope || window;
+		this[type].handler = fn;
+	};
+	
+	Canvas.CustomEvent = function(type) {
+		this.type = type;
+		this.scope = null;
+		this.handler = null;
+		var self = this;
+		this.fire = function(e) {
+			if(this.handler != null) {
+				self.handler.call(self.scope, e);
+			}
+		};
 	};
 	
 	
