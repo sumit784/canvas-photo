@@ -8,16 +8,8 @@ var Canvas = window.Canvas || {};
 	 * @namespace Canvas.Element
 	 * @class Element
 	 * @constructor
-	 * @param el {HTMLElement | String} Container element for the canvas.
 	 */
-	Canvas.Element = function(el, oConfig) {
-		this._initElement(el);
-		this._initConfig(oConfig);
-		this._createCanvasBackground();
-		this._createContainer();
-		this._initEvents();
-		this._initCustomEvents();
-	};
+	Canvas.Element = function() {};
 	
 	/**
 	 * Constant for the default CSS class name that represents a Canvas
@@ -74,7 +66,25 @@ var Canvas = window.Canvas || {};
 	 * @type object
 	 */
 	Canvas.Element.prototype._currentTransform = null;
-		
+	
+	/**
+	 * Init method
+	 * @method init
+	 * @param el {HTMLElement | String} Container element for the canvas.
+	 * @param oConfig {Object} userConfig The configuration Object literal 
+	 */
+	Canvas.Element.prototype.init = function(el, oConfig) {
+		if (el == '') {
+			return;
+		}
+		this._initElement(el);
+		this._initConfig(oConfig);
+		this._createCanvasBackground();
+		this._createContainer();
+		this._initEvents();
+		this._initCustomEvents();
+	};
+	
 	/**
 	 * The Canvas class's initialization method. This method is automatically 
 	 * called by the constructor, and sets up all DOM references for 
@@ -109,9 +119,9 @@ var Canvas = window.Canvas || {};
 	};
 
 	/**
-   * The custom events initialization method. 
-   * @method _initCustomEvents
-   */
+	 * The custom events initialization method. 
+	 * @method _initCustomEvents
+	 */
 	Canvas.Element.prototype._initCustomEvents = function() {
 		this.onRotateStart = new Canvas.CustomEvent('onRotateStart');
 		this.onRotateMove = new Canvas.CustomEvent('onRotateMove');		
